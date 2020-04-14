@@ -69,8 +69,9 @@ class SIR(object):
         if fig is None:
             fig = plt.figure()
         for status, c in status_colors.items():
-            plt.plot(pop_df[pop_df.status == status].pos_x,
-                     pop_df[pop_df.status == status].pos_y, '.', color=c, label=status)
+            plt.scatter(pop_df[pop_df.status == status].pos_x,
+                        pop_df[pop_df.status == status].pos_y, c=c,
+                        s=pop_df[pop_df.status == status].days_in_status, label=status)
         plt.legend(loc=4)
         return fig
 
