@@ -60,9 +60,9 @@ class SIR(object):
         Run a single iteration
         :return:
         """
+        self.test_and_isolate()
         self.update_locations()
         self.update_status()
-        self.test_and_isolate()
 
     @staticmethod
     def plot_pop_locations(pop_df, status_colors, fig=None):
@@ -72,6 +72,8 @@ class SIR(object):
             plt.scatter(pop_df[pop_df.status == status].pos_x,
                         pop_df[pop_df.status == status].pos_y, c=c,
                         s=pop_df[pop_df.status == status].days_in_status, label=status)
+        plt.plot(pop_df[pop_df.is_isolated].pos_x,
+                 pop_df[pop_df.is_isolated].pos_y, 'kx', label='isolated')
         plt.legend(loc=4)
         return fig
 
@@ -90,15 +92,16 @@ class SIR(object):
         Move people from 'S' to 'I' status
         :return:
         """
-        # todo: take into account isolation
         # todo: find more efficient way to find nearest neighbor distance (consider using scipy.spatial.KDTree)
-        dist_arr = distance_matrix(self.pop_df[['pos_x', 'pos_y']].values,
-                                   self.pop_df[['pos_x', 'pos_y']].values)
-        np.fill_diagonal(dist_arr, np.nan)
-        is_infected = np.any(dist_arr < self.params['infection_radius'], axis=1)
-        new_infections = is_infected & (self.pop_df.status == 'S')
-        self.pop_df.loc[new_infections, 'status'] = 'I'
-        self.pop_df.loc[new_infections, 'days_in_status'] = 0
+        i_and_not_isolated = (self.pop_df.status == 'I') & (~self.pop_df.is_isolated)
+        s_and_not_isolated = (self.pop_df.status == 'S') & (~self.pop_df.is_isolated)
+        i_pos = self.pop_df.loc[i_and_not_isolated, ['pos_x', 'pos_y']].values
+        s_pos = self.pop_df.loc[s_and_not_isolated, ['pos_x', 'pos_y']].values
+        dist_arr = distance_matrix(i_pos, s_pos)
+        is_infected = np.any(dist_arr < self.params['infection_radius'], axis=0)
+        infected_idx = s_and_not_isolated[s_and_not_isolated].index[is_infected]
+        self.pop_df.loc[infected_idx, 'status'] = 'I'
+        self.pop_df.loc[infected_idx, 'days_in_status'] = 0
 
     def remove(self):
         """
@@ -119,7 +122,9 @@ class SIR(object):
         This should be a central part of the research
         :return:
         """
-        pass
+        # Isolate 10 random people every iteration (very stupid strategy, just for debugging)
+        isolate_idx = self.pop_df.sample(10).index
+        self.pop_df.loc[isolate_idx, 'is_isolated'] = True
 
     def update_locations(self):
         step_direction = np.random.random(len(self.pop_df)) * 2 * np.pi
@@ -139,17 +144,17 @@ class SIR(object):
 
 def main():
     params = {
-        'n_days': 30,
+        'n_days': 60,
         'iter_per_day': 4,
-        'init_status': {'S': 1000, 'I': 10, 'R': 0},
+        'init_status': {'S': 10000, 'I': 10, 'R': 0},
         'map_size': 10000,
         'step_size_iter': 100,
         'random_state': 42,
         'infection_radius': 20,
-        'infection_duration': 10
+        'infection_duration': 20
     }
     sir = SIR(params)
-    outputs = sir.run_sim(real_time_plot=True, frame_delay=0.000001)
+    outputs = sir.run_sim(real_time_plot=False, frame_delay=0.000001)
     # SIR.plot_pop_locations(sir.pop_df).show()
     plt.figure().show()
     plt.plot(sir.t, pd.DataFrame(outputs))
