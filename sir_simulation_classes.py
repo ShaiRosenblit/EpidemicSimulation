@@ -34,6 +34,8 @@ class SIR(object):
             astype('category').cat.set_categories(self.params['init_status'].keys())
         pop_df['days_in_status'] = 0  # how many days have passed since entering the current status
         pop_df['infections_count'] = 0  # how many people were infected by the person
+        pop_df['is_symptomatic'] = False  # True - will show symptoms (at some point), False - will never show symptoms
+        pop_df['symptoms_score'] = 0  # represent the severity of the symptoms (0 - no symptoms, 1 - maximum symptoms)
         pop_df['is_isolated'] = False
         return pop_df
 
@@ -96,6 +98,7 @@ class SIR(object):
             self.test_and_isolate()
         self.update_locations()
         self.update_status()
+        self.update_symptoms()
 
     @staticmethod
     def plot_pop_locations(pop_df, status_colors, t, fig=None, ax=None,
@@ -112,6 +115,8 @@ class SIR(object):
                        s=pop_df[pop_df.status == status].days_in_status, label=status)
         ax.plot(pop_df[pop_df.is_isolated].pos_x,
                 pop_df[pop_df.is_isolated].pos_y, 'kx', label='isolated')
+        ax.scatter(pop_df[pop_df.symptoms_score > 0].pos_x,
+                   pop_df[pop_df.symptoms_score > 0].pos_y, s=80, facecolors='none', edgecolors='y', label='symptomatic')
         ax.legend(loc=4)
         ax.set_title(f't = {t:.2f} [days]' + title_postfix)
         return fig, ax
@@ -143,6 +148,8 @@ class SIR(object):
         infecting_idx = i_and_not_isolated[i_and_not_isolated].index[is_infecting]
         self.pop_df.loc[infected_idx, 'status'] = 'I'
         self.pop_df.loc[infected_idx, 'days_in_status'] = 0
+        self.pop_df.loc[infected_idx, 'is_symptomatic'] = \
+            np.random.random(len(infected_idx)) > self.params['symptoms_prob']
         self.pop_df.loc[infecting_idx, 'infections_count'] = self.pop_df.loc[infecting_idx, 'infections_count'] + 1
 
     def remove(self):
@@ -158,6 +165,7 @@ class SIR(object):
 
         self.pop_df.loc[is_remove, 'status'] = 'R'
         self.pop_df.loc[is_remove, 'days_in_status'] = 0
+        self.pop_df.loc[is_remove, 'symptoms_score'] = 0  # when someone is removed he stops showing symptoms
 
     def test_and_isolate(self):
         """
@@ -181,6 +189,24 @@ class SIR(object):
         self.pop_df['pos_y'] = np.mod(self.pop_df['pos_y'], self.params['map_size'])
         # todo: add boundaries to the map and avoid stepping outside of them
 
+    def update_symptoms(self):
+        """
+        Update the symptoms score
+        :return:
+        """
+        # Find agents that should show symptoms but haven't shown yet
+        i_with_no_symp_yet = \
+            (self.pop_df.status == 'I') & self.pop_df.is_symptomatic & (self.pop_df.symptoms_score == 0)
+        default_symptoms_score = 1  # currently we use 'symptoms_score' as binary, so the score is only 1 or 0
+        # Poison distribution
+        self.pop_df.loc[i_with_no_symp_yet, 'symptoms_score'] = \
+            default_symptoms_score * (np.random.random(sum(i_with_no_symp_yet)) < 1 / self.params['days_to_symptoms'])
+
+        # Randomly add symptoms to non infective (this has no memory, not very realistic, but good enough)
+        non_infective = self.pop_df.status != 'I'
+        self.pop_df.loc[non_infective, 'symptoms_score'] = \
+            default_symptoms_score * (np.random.random(sum(non_infective)) < self.params['non_infective_symptoms_prob'])
+
     def get_outputs(self, **kwargs):
         """
         Extract a dictionary of outputs from the DataFrame
@@ -201,12 +227,15 @@ def main():
         'map_size': 1000,
         'step_size_iter': 10,
         'random_state': 42,
-        'infection_radius': 12,
+        'infection_radius': 6,
         'infection_duration': 20,
+        'symptoms_prob': 0.2,
+        'days_to_symptoms': 5,
+        'non_infective_symptoms_prob': 0.0,  # the probability that a non-infective will show symptoms
         'tests_per_day': 2
     }
     sir = SIR(params)
-    outputs = sir.run_sim(real_time_plot=False, frame_delay=0.000001)
+    outputs = sir.run_sim(real_time_plot=True, frame_delay=0.000001)
     outputs_df = pd.DataFrame(outputs)
     n_pop = sum(params['init_status'].values())
     plt.figure().show()
