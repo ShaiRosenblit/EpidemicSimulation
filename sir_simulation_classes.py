@@ -6,6 +6,7 @@ from tqdm import tqdm
 import time
 
 
+# noinspection PyPep8Naming
 class SIR(object):
     def __init__(self, params):
         self.params = params
@@ -32,8 +33,26 @@ class SIR(object):
         pop_df['status'] = pop_df['status']. \
             astype('category').cat.set_categories(self.params['init_status'].keys())
         pop_df['days_in_status'] = 0  # how many days have passed since entering the current status
+        pop_df['infections_count'] = 0  # how many people were infected by the person
         pop_df['is_isolated'] = False
         return pop_df
+
+    def calc_R(self):
+        """
+        Calculate the "reproduction number".
+        The idea is to calculate the average number of new infections for all the infective people
+        and multiply by the infection duration.
+        :return: R
+        """
+        new_infections = (self.pop_df.status == 'I') & \
+                         (self.pop_df.days_in_status == 0)
+        infecting = (self.pop_df.status == 'I') & \
+                    (self.pop_df.days_in_status > 0) & ~self.pop_df.is_isolated
+        if infecting.sum() == 0:
+            return np.nan
+        R = self.params['infection_duration'] * self.params['iter_per_day'] * \
+            (new_infections.sum() / infecting.sum())
+        return R
 
     def run_sim(self, real_time_plot=False,
                 frame_delay=0.001, status_colors=None, display=None):
@@ -57,7 +76,8 @@ class SIR(object):
                 plt.cla()
                 fig, ax = self.plot_pop_locations(self.pop_df, status_colors, t,
                                                   fig=fig, ax=ax, xlim=[0, self.params['map_size']],
-                                                  ylim=[0, self.params['map_size']])
+                                                  ylim=[0, self.params['map_size']],
+                                                  title_postfix=f'\nR = {self.calc_R()}')
                 if display is not None:
                     display.clear_output(wait=True)
                     display.display(fig)
@@ -67,18 +87,19 @@ class SIR(object):
 
         return outputs
 
-    def sir_iter(self):
+    def sir_iter(self, apply_isolation=True):
         """
         Run a single iteration
         :return:
         """
-        self.test_and_isolate()
+        if apply_isolation:
+            self.test_and_isolate()
         self.update_locations()
         self.update_status()
 
     @staticmethod
     def plot_pop_locations(pop_df, status_colors, t, fig=None, ax=None,
-                           xlim=None, ylim=None):
+                           xlim=None, ylim=None, title_postfix=''):
         if fig is None:
             fig, ax = plt.subplots()
         ax.cla()
@@ -92,7 +113,7 @@ class SIR(object):
         ax.plot(pop_df[pop_df.is_isolated].pos_x,
                 pop_df[pop_df.is_isolated].pos_y, 'kx', label='isolated')
         ax.legend(loc=4)
-        ax.set_title(f't = {t:.2f} [days]')
+        ax.set_title(f't = {t:.2f} [days]' + title_postfix)
         return fig, ax
 
     def update_status(self):
@@ -117,9 +138,12 @@ class SIR(object):
         s_pos = self.pop_df.loc[s_and_not_isolated, ['pos_x', 'pos_y']].values
         dist_arr = distance_matrix(i_pos, s_pos)
         is_infected = np.any(dist_arr < self.params['infection_radius'], axis=0)
+        is_infecting = np.any(dist_arr < self.params['infection_radius'], axis=1)
         infected_idx = s_and_not_isolated[s_and_not_isolated].index[is_infected]
+        infecting_idx = i_and_not_isolated[i_and_not_isolated].index[is_infecting]
         self.pop_df.loc[infected_idx, 'status'] = 'I'
         self.pop_df.loc[infected_idx, 'days_in_status'] = 0
+        self.pop_df.loc[infecting_idx, 'infections_count'] = self.pop_df.loc[infecting_idx, 'infections_count'] + 1
 
     def remove(self):
         """
@@ -163,6 +187,7 @@ class SIR(object):
         :return: dict
         """
         output = self.pop_df.status.value_counts().to_dict()
+        output.update({'R': self.calc_R()})
         output.update(kwargs)
         return output
 
@@ -171,20 +196,24 @@ def main():
     params = {
         'n_days': 60,
         'iter_per_day': 4,
-        'init_status': {'S': 500, 'I': 10, 'R': 0},
-        'I_init_pos': [500, 500],  # if None, infected people are randomly spread
+        'init_status': {'S': 1000, 'I': 20, 'R': 0},
+        'I_init_pos': None,  # [500, 500],  # if None, infected people are randomly spread
         'map_size': 1000,
         'step_size_iter': 10,
         'random_state': 42,
-        'infection_radius': 40,
+        'infection_radius': 12,
         'infection_duration': 20,
-        'tests_per_day': 510
+        'tests_per_day': 2
     }
     sir = SIR(params)
-    outputs = sir.run_sim(real_time_plot=True, frame_delay=0.000001)
-    plt.figure().show()
+    outputs = sir.run_sim(real_time_plot=False, frame_delay=0.000001)
     outputs_df = pd.DataFrame(outputs)
-    plt.plot(outputs_df.t, outputs_df[list(params['init_status'].keys())])
+    n_pop = sum(params['init_status'].values())
+    plt.figure().show()
+    plt.plot(outputs_df.t, outputs_df[list(params['init_status'].keys())] / n_pop)
+    plt.plot(outputs_df.t, outputs_df.R)
+    plt.figure()
+    plt.hist(sir.pop_df.infections_count)
     return outputs
 
 
