@@ -77,7 +77,7 @@ class SIR(object):
                 fig, ax = self.plot_pop_locations(self.pop_df, status_colors, t,
                                                   fig=fig, ax=ax, xlim=[0, self.params['map_size']],
                                                   ylim=[0, self.params['map_size']],
-                                                  title_postfix=f'\nR = {self.calc_R()}')
+                                                  title_postfix=f'\nR = {self.calc_R():.2f}')
                 if display is not None:
                     display.clear_output(wait=True)
                     display.display(fig)
@@ -187,7 +187,7 @@ class SIR(object):
         :return: dict
         """
         output = self.pop_df.status.value_counts().to_dict()
-        output.update({'R': self.calc_R()})
+        output.update({'rep_num': self.calc_R()})
         output.update(kwargs)
         return output
 
