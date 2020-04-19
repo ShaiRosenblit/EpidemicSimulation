@@ -248,15 +248,15 @@ def create_people(sites: AllSites):
             person.household = household
             person.susceptibility_degree = 1.0
 
-            # choose whether sick or healthy
-            person.sickness_degree = random.choices([0.0, 1.0], [0.9, 0.1])[0]
+            # choose whether ill or healthy
+            person.illness_degree = random.choices([0.0, 1.0], [0.9, 0.1])[0]
 
             # choose whether has symptoms
-            person.symptoms_degree = 0.0 if (person.sickness_degree == 0.0) else random.uniform(0, 1)
+            person.symptoms_degree = 0.0 if (person.illness_degree == 0.0) else random.uniform(0, 1)
 
             # choose how long infected
             person.time_infected_minutes = random.uniform(0,10000) if \
-                person.sickness_degree > 0 else None
+                person.illness_degree > 0 else None
 
             # set other parameters
             person.immunity_degree = 0.0

@@ -50,9 +50,9 @@ class Person:
         self.household: Household = None
 
         # magnitudes of various variables that characterize the illness
-        # (the `Person` is sick if their `sickness_degree` is strictly positive)
+        # (the `Person` is ill if their `illness_degree` is strictly positive)
         self.susceptibility_degree: float = None
-        self.sickness_degree: float = None
+        self.illness_degree: float = None
         self.symptoms_degree: float = None
         self.immunity_degree: float = None
 
