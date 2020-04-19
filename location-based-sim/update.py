@@ -1,11 +1,13 @@
 """
 functions for updating the state of the world
 """
+from typing import List
+
 from person import Person
 from timing import datetime
 
 
-def move_people(people, policy, time, time_step):
+def move_people(people:List[Person], policy, time:datetime, time_step:float):
     """
     move all people from site to site.
     `people` is the collection of all `Person`s.
@@ -16,7 +18,7 @@ def move_people(people, policy, time, time_step):
         move_person(person, policy, time, time_step)
 
 
-def move_person(person: Person, policy, time: datetime, time_step):
+def move_person(person: Person, policy, time:datetime, time_step:float):
     """
     move person to next location, taking into account also the policy.
     `time` is the current time.
@@ -29,6 +31,8 @@ def move_person(person: Person, policy, time: datetime, time_step):
         if time >= person.next_site_time:
             new_site = person.next_site
             person.change_site(new_site)
+        else:
+            person.time_in_current_site += time_step
         return
     else:
 
@@ -43,11 +47,13 @@ def move_person(person: Person, policy, time: datetime, time_step):
                 break
         if out is None:
             # no commuting pattern was executed - don't move person.
+            person.time_in_current_site += time_step
             return
         else:
             # a commuting pattern was executed.
             if new_site == person.site:
                 # if the new site equal the current site, don't do anything.
+                person.time_in_current_site += time_step
                 return
             elif next_site_time > time:
                 # if the destination time in the new site is in the future - go
