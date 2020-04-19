@@ -43,7 +43,7 @@ class PublicTransport(Location):
         Location.__init__(self)
 
         self.path: Tuple[TransportStation] = None
-        self.start_times: List[Time] = None
+        self.start_times: List[Tuple[int, float]] = None
         self.travel_times: Tuple[float] = None
 
         self.current_station: Union[TransportStation, DummyLocation] = None

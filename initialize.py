@@ -111,7 +111,7 @@ def create_locations():
         public_transport.start_times = []
         for day in range(5):
             for minutes in range(420, 30, 1201):
-                public_transport.start_times.append(Time(day, minutes))
+                public_transport.start_times.append((day, minutes))
 
         public_transport.travel_times = []
         for loc1, loc2 in zip(public_transport.path[:-1], public_transport.path[1:]):
