@@ -174,8 +174,8 @@ def create_people(locations: AllLocations):
                 if not uses_public_transport:
                     commuting_pattern1 = CommutingPattern()
                     commuting_pattern1.initial_location_condition = [person.household.home]
-                    commuting_pattern1.initial_minutes_condition = (480.0, 540.0)
-                    commuting_pattern1.initial_day_condition = [0, 1, 2, 3, 4, 5]
+                    commuting_pattern1.minutes_condition = (480.0, 540.0)
+                    commuting_pattern1.day_condition = [0, 1, 2, 3, 4, 5]
                     commuting_pattern1.time_in_location_condition = None
                     commuting_pattern1.final_location_options = [random.choice(locations.businesses)]
                     commuting_pattern1.travel_time = random.uniform(20, 50)
@@ -183,8 +183,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern2 = CommutingPattern()
                     commuting_pattern2.initial_location_condition = commuting_pattern1.final_location_options
-                    commuting_pattern2.initial_minutes_condition = None
-                    commuting_pattern2.initial_day_condition = None
+                    commuting_pattern2.minutes_condition = None
+                    commuting_pattern2.day_condition = None
                     commuting_pattern2.time_in_location_condition = 540
                     commuting_pattern2.final_location_options = [household.home]
                     commuting_pattern2.travel_time = commuting_pattern1.travel_time
@@ -195,8 +195,8 @@ def create_people(locations: AllLocations):
                 else:
                     commuting_pattern1 = CommutingPattern()
                     commuting_pattern1.initial_location_condition = [person.household.home]
-                    commuting_pattern1.initial_minutes_condition = (480.0, 540.0)
-                    commuting_pattern1.initial_day_condition = [0, 1, 2, 3, 4, 5]
+                    commuting_pattern1.minutes_condition = (480.0, 540.0)
+                    commuting_pattern1.day_condition = [0, 1, 2, 3, 4, 5]
                     commuting_pattern1.time_in_location_condition = None
                     commuting_pattern1.final_location_options = [random.choice(locations.transport_stations)]
                     commuting_pattern1.travel_time = random.uniform(0, 10)
@@ -204,8 +204,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern2 = CommutingPattern()
                     commuting_pattern2.initial_location_condition = commuting_pattern1.final_location_options
-                    commuting_pattern2.initial_minutes_condition = None
-                    commuting_pattern2.initial_day_condition = None
+                    commuting_pattern2.minutes_condition = None
+                    commuting_pattern2.day_condition = None
                     commuting_pattern2.time_in_location_condition = None
                     commuting_pattern2.final_location_options = [
                         random.choice(commuting_pattern1.final_location_options[0].public_transports)]
@@ -214,8 +214,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern3 = CommutingPattern()
                     commuting_pattern3.initial_location_condition = commuting_pattern2.final_location_options
-                    commuting_pattern3.initial_minutes_condition = None
-                    commuting_pattern3.initial_day_condition = None
+                    commuting_pattern3.minutes_condition = None
+                    commuting_pattern3.day_condition = None
                     commuting_pattern3.time_in_location_condition = None
                     commuting_pattern3.final_location_options = random.choice(
                         [station for station in commuting_pattern3.initial_location_condition[0].path if
@@ -225,8 +225,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern4 = CommutingPattern()
                     commuting_pattern4.initial_location_condition = commuting_pattern3.final_location_options
-                    commuting_pattern4.initial_minutes_condition = None
-                    commuting_pattern4.initial_day_condition = None
+                    commuting_pattern4.minutes_condition = None
+                    commuting_pattern4.day_condition = None
                     commuting_pattern4.time_in_location_condition = None
                     commuting_pattern4.final_location_options = random.choice(locations.businesses)
                     commuting_pattern4.travel_time = random.uniform(0, 10)
@@ -234,8 +234,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern5 = CommutingPattern()
                     commuting_pattern5.initial_location_condition = commuting_pattern4.final_location_options
-                    commuting_pattern5.initial_minutes_condition = None
-                    commuting_pattern5.initial_day_condition = None
+                    commuting_pattern5.minutes_condition = None
+                    commuting_pattern5.day_condition = None
                     commuting_pattern5.time_in_location_condition = 540
                     commuting_pattern5.final_location_options = commuting_pattern4.initial_location_condition
                     commuting_pattern5.travel_time = commuting_pattern4.travel_time
@@ -243,8 +243,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern6 = CommutingPattern()
                     commuting_pattern6.initial_location_condition = commuting_pattern5.final_location_options
-                    commuting_pattern6.initial_minutes_condition = None
-                    commuting_pattern6.initial_day_condition = None
+                    commuting_pattern6.minutes_condition = None
+                    commuting_pattern6.day_condition = None
                     commuting_pattern6.time_in_location_condition = None
                     commuting_pattern6.final_location_options = commuting_pattern2.final_location_options
                     commuting_pattern6.travel_time = 0
@@ -252,8 +252,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern7 = CommutingPattern()
                     commuting_pattern7.initial_location_condition = commuting_pattern6.final_location_options
-                    commuting_pattern7.initial_minutes_condition = None
-                    commuting_pattern7.initial_day_condition = None
+                    commuting_pattern7.minutes_condition = None
+                    commuting_pattern7.day_condition = None
                     commuting_pattern7.time_in_location_condition = None
                     commuting_pattern7.final_location_options = commuting_pattern2.initial_location_condition
                     commuting_pattern7.travel_time = 0
@@ -261,8 +261,8 @@ def create_people(locations: AllLocations):
 
                     commuting_pattern8 = CommutingPattern()
                     commuting_pattern8.initial_location_condition = commuting_pattern7.final_location_options
-                    commuting_pattern8.initial_minutes_condition = None
-                    commuting_pattern8.initial_day_condition = None
+                    commuting_pattern8.minutes_condition = None
+                    commuting_pattern8.day_condition = None
                     commuting_pattern8.time_in_location_condition = None
                     commuting_pattern8.final_location_options = [household.home]
                     commuting_pattern8.travel_time = commuting_pattern1.travel_time

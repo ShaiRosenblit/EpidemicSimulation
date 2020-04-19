@@ -8,8 +8,8 @@ from timing import datetime, timedelta
 class CommutingPattern:
     def __init__(self):
         self.initial_location_condition: Optional[List[Location]] = None
-        self.initial_minutes_condition: Optional[Tuple[float, float]] = None
-        self.initial_day_condition: Optional[List[int]] = None
+        self.minutes_condition: Optional[Tuple[float, float]] = None
+        self.day_condition: Optional[List[int]] = None
         self.time_in_location_condition: Optional[float] = None
 
         self.final_location_options: List[Location] = None
@@ -24,11 +24,11 @@ class CommutingPattern:
 
         if (self.initial_location_condition is not None) and (current_location not in self.initial_location_condition):
             return None
-        if (self.initial_minutes_condition is not None) and (
-                not (self.initial_minutes_condition[0] <= (60 * time.hour + time.minute) <=
-                     self.initial_minutes_condition[1])):
+        if (self.minutes_condition is not None) and (
+                not (self.minutes_condition[0] <= (60 * time.hour + time.minute) <=
+                     self.minutes_condition[1])):
             return None
-        if (self.initial_day_condition is not None) and (time.day not in self.initial_day_condition):
+        if (self.day_condition is not None) and (time.day not in self.day_condition):
             return None
 
         if (self.time_in_location_condition is not None) and (time_in_location < self.time_in_location_condition):
