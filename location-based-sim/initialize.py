@@ -189,7 +189,7 @@ def create_sites():
 
         all_sites.public_transports.append(public_transport)
 
-        return all_sites
+    return all_sites
 
 
 def create_people(sites: AllSites):
