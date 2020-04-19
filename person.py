@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from commuting_pattern import CommutingPattern
-from location import Location, FixedLocation
+from sites import Site, FixedSite, dummy_site
 from timing import datetime
 
 
@@ -21,7 +21,7 @@ class PersonOccupation(Enum):
 class Household:
     def __init__(self):
         self.people: List[Person] = None
-        self.home: Location = None
+        self.home: Site = None
 
 
 class Person:
@@ -45,18 +45,39 @@ class Person:
         self.abides_by_rules_probability: float = None
         self.trackable_probability: float = None
 
-        self.location: Location = None
-        self.time_in_current_location: float = None
+        self.site: Site = None
+        self.time_in_current_site: float = None
         self.current_commute: Optional[CommutingPattern] = None
         self.current_commute_start_time: Optional[float] = None
 
-        self.next_location: Optional[Location] = None
-        self.next_location_time: Optional[datetime] = None
-        self.is_in_dummy_location: bool = None
+        self.next_site: Optional[Site] = None
+        self.next_site_time: Optional[datetime] = None
+        self.is_in_dummy_site: bool = None
 
     @property
-    def coordinates(self):
-        if isinstance(self.location, FixedLocation):
-            return self.location.coordinates
+    def location(self):
+        if isinstance(self.site, FixedSite):
+            return self.site.location
         else:
             return None
+
+    def change_site(self, new_site: Site):
+        if self.site is not new_site:
+
+            if self.is_in_dummy_site:
+                self.is_in_dummy_site = False
+                self.next_site = None
+                self.next_site_time = None
+
+            self.site.people.remove(self)
+            self.site = new_site
+            new_site.people.append(self)
+            self.time_in_current_site = 0
+
+    def put_in_dummy_site(self, next_site:Site, next_site_time:datetime):
+
+        self.change_site(dummy_site)
+
+        self.is_in_dummy_site = True
+        self.next_site = next_site
+        self.next_site_time = next_site_time
