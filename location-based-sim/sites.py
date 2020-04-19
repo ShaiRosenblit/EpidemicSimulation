@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Optional
 
 
 class BoundedArea:
@@ -118,5 +118,5 @@ class PublicTransport(Site):
         self.travel_times: Tuple[float] = None
 
         # The current `TransportStation` of the `PublicTransport`. If currently
-        # in between stations, it will be assigned the `dummy_site`.
-        self.current_station: Union[TransportStation, DummySite] = None
+        # in between stations, it will be `None`
+        self.current_station: Optional[TransportStation] = None
