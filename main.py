@@ -1,6 +1,6 @@
 from initialize import create_sites, create_people
 from timing import time_iter
-from update import move_people
+from update import update_people
 
 sites = create_sites()
 people = create_people(sites)
