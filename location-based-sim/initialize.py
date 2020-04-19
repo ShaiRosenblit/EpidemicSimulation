@@ -279,8 +279,9 @@ def create_people(sites: AllSites):
             if person.occupation == PersonOccupation.WORKER:
 
                 # check if uses public transport
-                uses_public_transport = \
-                    random.choices([True, False], [0.0, 1.0])[0]
+                uses_public_transport = False
+                # uses_public_transport = \
+                #     random.choices([True, False], [0.0, 1.0])[0]
 
                 if not uses_public_transport:
                     # doesn't use public transport.
