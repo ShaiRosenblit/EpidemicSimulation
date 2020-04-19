@@ -21,20 +21,25 @@ for each time step:
         update the infection status for all `Person`s in the `Site`
 """
 from initialize import create_people, create_sites
+from update import move_people, update_people_status
+from timing import time_iter
 
 sites = create_sites()
 people = create_people(sites)
-#
+
+
+policy = None
 # metrics = MetricsObject(people, sites)
 # display = DisplayObject(people, sites)
 # policy = PolicyObject(people, sites)
-#
-# time_step = 5
-#
-# for step, time in enumerate(time_iter(time_step)):
-#     metrics.update(people, sites, step)
-#     display.update(people, sites, step)
-#     policy.update(people, sites, metrics)
-#     move_public_transports(sites.public_transports, policy, time, time_step)
-#     move_people(people, policy, time)
-#     update_people_status(sites, time)
+
+# time step, in minutes
+time_step = 5
+
+for step, time in enumerate(time_iter(time_step)):
+    # metrics.update(people, sites, step)
+    # display.update(people, sites, step)
+    # policy.update(people, sites, metrics)
+    # move_public_transports(sites.public_transports, policy, time, time_step)
+    move_people(people, policy, time, time_step)
+    update_people_status(sites.sites, policy, time_step)
