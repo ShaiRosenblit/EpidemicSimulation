@@ -44,6 +44,7 @@ def create_sites():
     for _ in range(number_of_homes):
         home = FixedSite()
         home.area = random.uniform(40, 60)
+        home.nominal_capacity = random.randint(3,6)
         home.dispersion_factor = 1.0
 
         home.location = (random.uniform(-3, 3), random.uniform(-3, 3))
@@ -61,6 +62,7 @@ def create_sites():
     for _ in range(number_of_businesses):
         business = FixedSite()
         business.area = random.uniform(100, 300)
+        business.nominal_capacity = random.randint(10,20)
         business.dispersion_factor = 1.0
 
         business.location = (random.normalvariate(0, 2), random.normalvariate(0, 2))
@@ -78,6 +80,7 @@ def create_sites():
     for _ in range(number_of_transport_stations):
         transport_station = TransportStation()
         transport_station.area = random.uniform(5, 20)
+        transport_station.nominal_capacity = random.randint(10, 30)
         transport_station.dispersion_factor = 1.0
 
         transport_station.location = (random.uniform(-3, 3), random.uniform(-3, 3))
@@ -98,6 +101,7 @@ def create_sites():
         public_transport = PublicTransport()
 
         public_transport.area = random.uniform(5, 10)
+        public_transport.nominal_capacity = random.randint(4, 10)
         public_transport.dispersion_factor = 1.0
 
         transport_station_shuffled = all_sites.transport_stations.copy()
