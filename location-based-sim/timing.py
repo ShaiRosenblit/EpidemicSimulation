@@ -20,7 +20,7 @@ def time_iter(time_step_minutes: float, initial_time: Optional[datetime] = None)
     time_step = timedelta(minutes=time_step_minutes)
     if initial_time is None:
         # if we don't have an initial time, use this default.
-        current_time = datetime(2020, 3, 1, 0, 0, tzinfo=timezone('Israel'))
+        current_time = datetime(2020, 3, 1, 0, 0) # tzinfo=timezone('Israel'))
     else:
         current_time = copy(initial_time)
     while True:
