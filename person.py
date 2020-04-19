@@ -15,7 +15,7 @@ class PersonOccupation(Enum):
     UNEMPLOYED = 0
     WORKER = 1
     STUDENT = 2
-    OTEHR = 3
+    OTHER = 3
 
 
 class Household:
