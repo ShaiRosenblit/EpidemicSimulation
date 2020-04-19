@@ -159,14 +159,9 @@ def create_people(sites: AllSites):
             person.susceptibility_degree = 1.0
             person.sickness_degree = random.choices([0.0, 1.0], [0.9, 0.1])[0]
             person.symptoms_degree = random.uniform(0, 1)
-            person.time_sick_minutes = random.uniform(0, 10000) if person.sickness_degree > 0 else None
+            person.time_infected_minutes = random.uniform(0, 10000) if person.sickness_degree > 0 else None
             person.immunity_degree = 0.0
-            person.wears_mask_probability = 0.0
-            person.keeps_distance_probability = 0.0
-            person.washes_hands_probability = 0.0
-            person.obeys_quarantine_probability = 0.0
-            person.abides_by_rules_probability = 0.0
-            person.trackable_probability = 0.0
+            person.abides_by_rules_degree = 0.0
             person.site = household.home
             person.time_in_current_site = 300
             person.current_commute = None
