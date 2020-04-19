@@ -1,5 +1,5 @@
 from typing import List, Tuple, Optional
-
+from timing import datetime
 
 class BoundedArea:
     """
@@ -120,3 +120,9 @@ class PublicTransport(Site):
         # The current `TransportStation` of the `PublicTransport`. If currently
         # in between stations, it will be `None`
         self.current_station: Optional[TransportStation] = None
+
+        # index of next station in `path`
+        self.next_station_index: Optional[int] = None
+
+        # time of stop in next station in `path`
+        self.next_station_time: Optional[datetime] = None
