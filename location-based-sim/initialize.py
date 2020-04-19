@@ -262,6 +262,7 @@ def create_people(sites: AllSites):
             person.immunity_degree = 0.0
             person.abides_by_rules_degree = 0.0
             person.site = household.home
+            person.site.people.append(person)
             person.time_in_current_site = 300
             person.current_commute = None
             person.current_commute_start_time = None
