@@ -34,6 +34,9 @@ class CommutingPattern:
         if (self.time_in_location_condition is not None) and (time_in_location < self.time_in_location_condition):
             return None
 
+        if (random.random > min(1, time_step * self.probability_per_minute)):
+            return None
+
         if isinstance(current_location, PublicTransport):
             final_location_options = []
             if current_location.current_station in self.final_location_options:
@@ -46,9 +49,6 @@ class CommutingPattern:
                     final_location_options.append(final_loc)
 
         if len(final_location_options) == 0:
-            return None
-
-        if (random.random > min(1, time_step * self.probability_per_minute)):
             return None
 
         final_location = random.choices(final_location_options)
