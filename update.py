@@ -1,5 +1,4 @@
 from person import Person
-from sites import Site
 from timing import datetime
 
 
