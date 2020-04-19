@@ -82,7 +82,7 @@ class CommutingPattern:
             return None
 
         # randomly decide whether the pattern will be executed
-        if (random.random > min(1, time_step * self.probability_per_minute)):
+        if (random.random() > min(1, time_step * self.probability_per_minute)):
             return None
 
         # we will now find the optional destination places.
