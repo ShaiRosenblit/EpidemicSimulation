@@ -44,7 +44,7 @@ def create_locations():
     for _ in range(number_of_homes):
         home = FixedLocation()
         home.area = random.uniform(40, 60)
-        home.dispression_factor = 1.0
+        home.dispersion_factor = 1.0
 
         home.coordinates = (random.uniform(-3, 3), random.uniform(-3, 3))
         home.is_outdoor = False
@@ -61,7 +61,7 @@ def create_locations():
     for _ in range(number_of_businesses):
         business = FixedLocation()
         business.area = random.uniform(100, 300)
-        business.dispression_factor = 1.0
+        business.dispersion_factor = 1.0
 
         business.coordinates = (random.normalvariate(0, 2), random.normalvariate(0, 2))
         business.is_outdoor = False
@@ -78,7 +78,7 @@ def create_locations():
     for _ in range(number_of_transport_stations):
         transport_station = TransportStation()
         transport_station.area = random.uniform(5, 20)
-        transport_station.dispression_factor = 1.0
+        transport_station.dispersion_factor = 1.0
 
         transport_station.coordinates = (random.uniform(-3, 3), random.uniform(-3, 3))
         transport_station.is_outdoor = True
@@ -98,7 +98,7 @@ def create_locations():
         public_transport = PublicTransport()
 
         public_transport.area = random.uniform(5, 10)
-        public_transport.dispression_factor = 1.0
+        public_transport.dispersion_factor = 1.0
 
         transport_station_shuffled = all_locations.transport_stations.copy()
         random.shuffle(transport_station_shuffled)

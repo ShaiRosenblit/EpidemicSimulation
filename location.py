@@ -18,7 +18,7 @@ class Location(LocationBase):
     def __init__(self):
         LocationBase.__init__(self)
         self.area: float = None
-        self.dispression_factor: float = None
+        self.dispersion_factor: float = None
 
 
 class FixedLocation(Location):
