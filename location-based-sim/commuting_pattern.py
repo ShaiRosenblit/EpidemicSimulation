@@ -107,7 +107,7 @@ class CommutingPattern:
             return None
 
         # choose a destination place
-        final_site = random.choices(final_site_options)
+        final_site = random.choice(final_site_options)
 
         # calculate the time it takes to travel to the destination
         if callable(self.travel_time):
