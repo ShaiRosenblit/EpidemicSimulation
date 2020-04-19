@@ -21,7 +21,7 @@ class PersonOccupation(Enum):
 class Household:
     def __init__(self):
         self.people: List[Person] = None
-        self.home: Site = None
+        self.home: FixedSite = None
 
 
 class Person:
