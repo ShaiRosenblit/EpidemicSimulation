@@ -23,6 +23,7 @@ for each time step:
 from initialize import create_people, create_sites
 from update import move_people, update_people_status
 from metrics import MetricManager
+from display import DisplayManager
 from timing import time_iter
 
 sites = create_sites()
@@ -31,7 +32,7 @@ people = create_people(sites)
 
 policy = None
 metrics = MetricManager(people, sites)
-# display = DisplayObject(people, sites)
+display = DisplayManager(people, sites)
 # policy = PolicyObject(people, sites)
 
 # time step, in minutes
@@ -40,6 +41,7 @@ time_step = 5
 metric_interval = 72
 
 for step, time in enumerate(time_iter(time_step)):
+    display.update(time)
     if step % metric_interval == 0:
         metrics.show(time)
     # display.update(people, sites, step)

@@ -1,0 +1,109 @@
+from typing import List
+from math import sqrt
+
+import matplotlib.pyplot as plt
+
+
+from initialize import AllSites
+from person import Person
+from timing import datetime
+
+
+class DisplayManager:
+    def __init__(self, people: List[Person], sites: AllSites):
+
+        self.people = people
+        self.sites = sites
+
+        self.fig = plt.figure(figsize=(6, 6), facecolor='black',
+                              edgecolor='black', frameon=True)
+        self.ax = plt.axes(facecolor='black', frameon=False, xticks=[],
+                           yticks=[], aspect='equal')
+
+        minx = float('inf')
+        maxx = -1 * float('inf')
+        miny = float('inf')
+        maxy = -1 * float('inf')
+
+        self.home_circles = []
+        for household in sites.households:
+            circ = plt.Circle(
+                xy=household.home.location,
+                radius=sqrt(household.home.area / 3.14 )*3,
+                linewidth=(1 + len(household.people)) / 3,
+                facecolor='white',
+                edgecolor=(0.5,0.5,0.5,1.0),
+                alpha=0.8,
+                axes=self.ax,
+            )
+            self.ax.add_artist(circ)
+            self.home_circles.append(circ)
+
+            minx = min(minx, household.home.location[0])
+            maxx = max(maxx, household.home.location[0])
+            miny = min(miny, household.home.location[1])
+            maxy = max(maxy, household.home.location[1])
+
+        self.business_squares = []
+        for business in sites.businesses:
+            sqr = plt.Rectangle(
+                xy=business.location,
+                width=sqrt(business.area)*3,
+                height=sqrt(business.area)*3,
+                linewidth=0,
+                facecolor='white',
+                edgecolor=(0.5,0.5,0.5,1.0),
+                alpha=0.8,
+                axes=self.ax
+            )
+            self.ax.add_artist(sqr)
+            self.business_squares.append(sqr)
+
+            minx = min(minx, business.location[0])
+            maxx = max(maxx, business.location[0])
+            miny = min(miny, business.location[1])
+            maxy = max(maxy, business.location[1])
+
+        dx = (maxx - minx) * 0.05
+        dy = (maxy - miny) * 0.05
+        self.ax.set_xlim(minx - dx, maxx + dx)
+        self.ax.set_ylim(miny - dy, maxy + dy)
+
+        self.time_txt = plt.text(
+            x=minx,
+            y=maxy,
+            s='',
+            fontdict={
+                'color': 'white',
+                'size' : 12
+            }
+        )
+
+    def update(self, time: datetime):
+        self.time_txt.set_text(str(time))
+
+        cmap = plt.get_cmap('bwr')
+
+        for household, circ in zip(self.sites.households, self.home_circles):
+
+            infected = sum(
+                person.illness_degree > 0 for person in household.people)
+            infected = infected / len(household.people)
+
+            circ.set_facecolor(cmap(cmap.N * infected))
+
+        for business, sqr in zip(self.sites.businesses, self.business_squares):
+
+            if len(business.people) == 0:
+                sqr.set_facecolor(None)
+                sqr.set_fill(False)
+            else:
+                infected = sum(
+                    person.illness_degree > 0 for person in business.people)
+                infected = infected / len(business.people)
+                sqr.set_fill(True)
+                sqr.set_facecolor(cmap(cmap.N * infected))
+            sqr.set_linewidth((1 + len(business.people)) / 6)
+
+        plt.draw()
+        plt.pause(0.001)
