@@ -294,7 +294,7 @@ def create_people(sites: AllSites):
                     commuting_pattern1.initial_site_condition = [
                         person.household.home]
                     commuting_pattern1.minutes_condition = (480.0, 540.0)
-                    commuting_pattern1.day_condition = [0, 1, 2, 3, 4, 5]
+                    commuting_pattern1.day_condition = [6, 0, 1, 2, 3, 4]
                     commuting_pattern1.time_in_site_condition = None
                     commuting_pattern1.final_site_options = [
                         random.choice(sites.businesses)]

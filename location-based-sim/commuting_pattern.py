@@ -20,7 +20,7 @@ class CommutingPattern:
         self.initial_site_condition: Optional[List[Site]] = None
 
         # a set of days in the week (as integers), such that the pattern will be
-        # executed only on these days.
+        # executed only on these days. (Monday = 0, Sunday = 6)
         self.day_condition: Optional[List[int]] = None
 
         # a set of time intervals in the day, defined as tuples of initial and
