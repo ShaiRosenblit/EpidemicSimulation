@@ -38,12 +38,15 @@ display = DisplayManager(people, sites)
 # time step, in minutes
 time_step = 5
 
+display_interval = 2
 metric_interval = 72
 
+
 for step, time in enumerate(time_iter(time_step)):
-    display.update(time)
     if step % metric_interval == 0:
         metrics.show(time)
+    if step % display_interval == 0:
+        display.update(time)
     # display.update(people, sites, step)
     # policy.update(people, sites, metrics)
     # move_public_transports(sites.public_transports, policy, time, time_step)
