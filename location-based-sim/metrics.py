@@ -3,10 +3,11 @@ from typing import List
 from person import Person
 from sites import Site
 from timing import datetime
+from initialize import AllSites
 
 
 class MetricManager:
-    def __init__(self, people: List[Person], sites: List[Site]):
+    def __init__(self, people: List[Person], sites: AllSites):
         self.people = people
         self.sites = sites
 
