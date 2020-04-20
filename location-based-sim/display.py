@@ -2,7 +2,7 @@ from typing import List
 from math import sqrt
 
 import matplotlib.pyplot as plt
-
+from matplotlib.colors import LinearSegmentedColormap
 
 from initialize import AllSites
 from person import Person
@@ -26,11 +26,11 @@ class DisplayManager:
         maxy = -1 * float('inf')
 
         self.home_circles = []
-        for household in sites.households:
+        for home in sites.homes:
             circ = plt.Circle(
-                xy=household.home.location,
-                radius=sqrt(household.home.area / 3.14 )*3,
-                linewidth=(1 + len(household.people)) / 3,
+                xy=home.location,
+                radius=sqrt(home.area / 3.14 )*3,
+                linewidth=0,
                 facecolor='white',
                 edgecolor=(0.5,0.5,0.5,1.0),
                 alpha=0.8,
@@ -39,10 +39,10 @@ class DisplayManager:
             self.ax.add_artist(circ)
             self.home_circles.append(circ)
 
-            minx = min(minx, household.home.location[0])
-            maxx = max(maxx, household.home.location[0])
-            miny = min(miny, household.home.location[1])
-            maxy = max(maxy, household.home.location[1])
+            minx = min(minx, home.location[0])
+            maxx = max(maxx, home.location[0])
+            miny = min(miny, home.location[1])
+            maxy = max(maxy, home.location[1])
 
         self.business_squares = []
         for business in sites.businesses:
@@ -82,15 +82,20 @@ class DisplayManager:
     def update(self, time: datetime):
         self.time_txt.set_text(str(time))
 
-        cmap = plt.get_cmap('bwr')
+        cmap = LinearSegmentedColormap.from_list('my_cmap',['blue','red'])
 
-        for household, circ in zip(self.sites.households, self.home_circles):
+        for home, circ in zip(self.sites.homes, self.home_circles):
 
-            infected = sum(
-                person.illness_degree > 0 for person in household.people)
-            infected = infected / len(household.people)
-
-            circ.set_facecolor(cmap(cmap.N * infected))
+            if len(home.people) == 0:
+                circ.set_facecolor(None)
+                circ.set_fill(False)
+            else:
+                infected = sum(
+                    person.illness_degree > 0 for person in home.people)
+                infected = infected / len(home.people)
+                circ.set_fill(True)
+                circ.set_facecolor(cmap(infected))
+            circ.set_linewidth((1 + len(home.people)) / 3)
 
         for business, sqr in zip(self.sites.businesses, self.business_squares):
 
@@ -102,8 +107,8 @@ class DisplayManager:
                     person.illness_degree > 0 for person in business.people)
                 infected = infected / len(business.people)
                 sqr.set_fill(True)
-                sqr.set_facecolor(cmap(cmap.N * infected))
-            sqr.set_linewidth((1 + len(business.people)) / 6)
+                sqr.set_facecolor(cmap(infected))
+            sqr.set_linewidth((1 + len(business.people)) / 20)
 
         plt.draw()
         plt.pause(0.001)
