@@ -66,7 +66,7 @@ class CommutingPattern:
 
         # check condition for day of weak
         if (self.day_condition is not None) and (
-                time.day not in self.day_condition):
+                time.weekday() not in self.day_condition):
             return None
 
         # check condition for time of day
