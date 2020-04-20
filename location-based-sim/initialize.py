@@ -56,10 +56,10 @@ def create_sites():
     all_sites = AllSites()
 
     # number of places were people live
-    number_of_homes = 200
+    number_of_homes = 300
 
     # numebr of places where people work
-    number_of_businesses = 10
+    number_of_businesses = 20
 
     number_of_public_transports = 0
     number_of_transport_stations = 0
