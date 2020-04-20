@@ -37,6 +37,8 @@ class AllSites:
         # the singleton dummy site
         self.dummy_site = dummy_site
 
+        self.households : List[Household] = []
+
     @property
     def sites(self) -> List[Site]:
         """
@@ -84,7 +86,7 @@ def create_sites():
         home.essentiality = 1.0
 
         # choose location ((x,y) coordinates) uniformly in the plane
-        home.location = (random.uniform(-3, 3), random.uniform(-3, 3))
+        home.location = (random.uniform(-300, 300), random.uniform(-300, 300))
 
         # add to the city and district
         city.sites.append(home)
@@ -113,7 +115,7 @@ def create_sites():
 
         # choose location ((x,y) coordinates) with higher density in the center
         business.location = (
-            random.normalvariate(0, 2), random.normalvariate(0, 2))
+            random.normalvariate(0, 100), random.normalvariate(0, 100))
 
         # add to the city and district
         city.sites.append(business)
@@ -209,6 +211,7 @@ def create_people(sites: AllSites):
 
         # create household for the current home
         household = Household()
+        sites.households.append(household)
         household.people = []
         household.home = sites.homes[i]
 
@@ -249,7 +252,7 @@ def create_people(sites: AllSites):
             person.susceptibility_degree = 1.0
 
             # choose whether ill or healthy
-            person.illness_degree = random.choices([0.0, 1.0], [0.9, 0.1])[0]
+            person.illness_degree = random.choices([0.0, 1.0], [0.98, 0.02])[0]
 
             # choose whether has symptoms
             person.symptoms_degree = 0.0 if (person.illness_degree == 0.0) else random.uniform(0, 1)
