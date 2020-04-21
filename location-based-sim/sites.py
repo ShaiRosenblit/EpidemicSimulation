@@ -73,7 +73,7 @@ class Site(SiteBase):
         if len(self.people) < 2:
             self.meeting_probability = 0
         else:
-            m_p = (len(self.people)/self.area)*self.dispersion_factor*100
+            m_p = (len(self.people)*10/self.area)*self.dispersion_factor*100
             self.meeting_probability = m_p if m_p < 100 else 100
 
     def check_meeting(self):
@@ -89,7 +89,7 @@ class Site(SiteBase):
                 if random.uniform(0, 100) <= self.meeting_probability:
                     person1 = self.people[i]
                     person2 = random.choice([person for person in self.people if person != person1])
-                    meeting = Meeting.create_meeting(person1=person1, person2=person2, site=self)
+                    meeting = Meeting().create_meeting(person1=person1, person2=person2, site=self)
                     meeting.time = datetime
                     meetings.append(meeting)
         return meetings

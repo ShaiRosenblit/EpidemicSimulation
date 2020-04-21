@@ -1,7 +1,3 @@
-from timing import datetime
-from person import Person
-from sites import Site
-
 
 class Meeting:
     """
@@ -9,26 +5,26 @@ class Meeting:
     """
     def __init__(self):
         # date and time of the meeting
-        self._time: datetime = None
+        self._time = None
         # list of the people involved in the meeting
         self._people_involved: tuple = None
         # the site in which the meeting happened
-        self._location: Site = None
+        self._location = None
 
     def __repr__(self):
         string = "Meeting(Location: {0} \n \t person1: {1} \n \t person2: {2} \n \t meeting time: {3} \n \t is meeting infected: {4}".format(
-            self._location, str(self._people_involved[0]), str(self._people_involved[1]), self._time, self.is_infected_in_meeting()
+            self._location, str(self._people_involved[0]), str(self._people_involved[1]), self.time.time, self.is_infected_in_meeting()
         )
         return string
 
     def __str__(self):
         string = "Meeting(Location: {0} \n person1: {1} \n person2: {2} \n meeting time: {3} \n is meeting infected: {4}".format(
-            self._location, str(self._people_involved[0]), str(self._people_involved[1]), self._time,
+            self._location, str(self._people_involved[0]), str(self._people_involved[1]), self.time.time,
             self.is_infected_in_meeting()
         )
         return string
 
-    def create_meeting(self, person1: Person, person2: Person, site: Site):
+    def create_meeting(self, person1, person2, site):
         """
         creates a new meeting object.
         :param person1 - first person in the meeting
@@ -52,7 +48,7 @@ class Meeting:
         checks if one of the people in the meeting is infected.
         :return boolean
         """
-        if self._people_involved[1].time_infected is not None or self._people_involved[0].time_infected is not None:
+        if self._people_involved[1].time_infected_minutes is not None or self._people_involved[0].time_infected_minutes is not None:
             return True
         return False
 
@@ -65,7 +61,4 @@ class Meeting:
         """
         updates the _time value of the meeting
         """
-        if isinstance(time, datetime):
-            self._time = time
-        else:
-            raise ValueError("expected 'datetime' object recieved {} type".format(type(time)))
+        self._time = time
