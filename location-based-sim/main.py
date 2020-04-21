@@ -51,4 +51,4 @@ for step, time in enumerate(time_iter(time_step)):
     # policy.update(people, sites, metrics)
     # move_public_transports(sites.public_transports, policy, time, time_step)
     move_people(people, policy, time, time_step)
-    update_people_status(sites.sites, policy, time_step)
+    update_people_status(sites.sites, policy, time_step, time)

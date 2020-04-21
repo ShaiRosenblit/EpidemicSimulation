@@ -66,16 +66,17 @@ def move_person(person: Person, policy, time: datetime, time_step: float):
                 person.change_site(new_site)
 
 
-def update_people_status(sites: List[Site], policy, time_step: float):
+def update_people_status(sites: List[Site], policy, time_step: float, time: datetime):
     """
     update the status of all people, by looping over all sites and updating
     for the people in each site.
     `time_step' is the size of the time step, in minutes.
+    :param time - current time
     """
     for site in sites:
         ###
         site.update_meeting_probability()
-        meetings = site.check_meeting()
+        meetings = site.check_meeting(time)
         ###
         update_people_status_for_site(site, policy, time_step)
 

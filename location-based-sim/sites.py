@@ -76,7 +76,7 @@ class Site(SiteBase):
             m_p = (len(self.people)*10/self.area)*self.dispersion_factor*100
             self.meeting_probability = m_p if m_p < 100 else 100
 
-    def check_meeting(self):
+    def check_meeting(self, time: datetime):
         """
         checks for meetings randomly using the meeting probability.
         if the randomized number is in the range of the meeting probability a 'Meeting' object is created.
@@ -89,8 +89,7 @@ class Site(SiteBase):
                 if random.uniform(0, 100) <= self.meeting_probability:
                     person1 = self.people[i]
                     person2 = random.choice([person for person in self.people if person != person1])
-                    meeting = Meeting().create_meeting(person1=person1, person2=person2, site=self)
-                    meeting.time = datetime
+                    meeting = Meeting(person1=person1, person2=person2, site=self, time=time)
                     meetings.append(meeting)
         return meetings
 
