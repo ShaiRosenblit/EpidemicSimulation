@@ -7,7 +7,7 @@ class Meeting:
         # date and time of the meeting
         self._time = time
         # list of the people involved in the meeting
-        self._people_involved = (person1, person2)
+        self._people_involved = [person1, person2]
         # the site in which the meeting happened
         self._location = site
 
@@ -36,7 +36,6 @@ class Meeting:
         checks if one of the people in the meeting is infected.
         :return boolean
         """
-        if self._people_involved[1].time_infected_minutes is not None or self._people_involved[0].time_infected_minutes is not None:
-            return True
-        return False
+        return self._people_involved[1].is_person_infected() or self._people_involved[0].is_person_infected()
+
 

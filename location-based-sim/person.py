@@ -132,3 +132,10 @@ class Person:
 
         self.next_site = next_site
         self.next_site_time = next_site_time
+
+    def is_person_infected(self):
+        """
+        checks if the person is infected, if so return True.
+        :return Boolean
+        """
+        return self.time_infected_minutes != None
