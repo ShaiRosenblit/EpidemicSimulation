@@ -1,5 +1,7 @@
 from typing import List, Tuple, Optional
 from timing import datetime
+from meetings import Meeting
+import random
 
 class BoundedArea:
     """
@@ -57,6 +59,40 @@ class Site(SiteBase):
         # this value determines the tendency of people in the site to move around
         # (lower values mean that people are relatively static)
         self.dispersion_factor: float = None
+
+        # the probability of creating a meeting, depending on the area, number of people in the site
+        # and the dispersion factor of the site
+        self.meeting_probability: float = None
+
+    def update_meeting_probability(self):
+        """
+        calculates the meeting probabilty in a 'Site' in a certain moment.
+        multiplying the number of people in square meters with the dispersion factor.
+        the meeting probability is in scale of 0 to 100.
+        """
+        if len(self.people) < 2:
+            self.meeting_probability = 0
+        else:
+            m_p = (len(self.people)/self.area)*self.dispersion_factor*100
+            self.meeting_probability = m_p if m_p < 100 else 100
+
+    def check_meeting(self):
+        """
+        checks for meetings randomly using the meeting probability.
+        if the randomized number is in the range of the meeting probability a 'Meeting' object is created.
+        :return list of meetings that occured in the 'Site'.
+                if no meetings were created returns an empty list.
+        """
+        meetings = []
+        if self.meeting_probability > 0:
+            for i in range(len(self.people)):
+                if random.uniform(0, 100) <= self.meeting_probability:
+                    person1 = self.people[i]
+                    person2 = random.choice([person for person in self.people if person != person1])
+                    meeting = Meeting.create_meeting(person1=person1, person2=person2, site=self)
+                    meeting.time = datetime
+                    meetings.append(meeting)
+        return meetings
 
 
 class FixedSite(Site):

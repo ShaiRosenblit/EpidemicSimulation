@@ -73,6 +73,10 @@ def update_people_status(sites: List[Site], policy, time_step: float):
     `time_step' is the size of the time step, in minutes.
     """
     for site in sites:
+        ###
+        site.update_meeting_probability()
+        meetings = site.check_meeting()
+        ###
         update_people_status_for_site(site, policy, time_step)
 
 
