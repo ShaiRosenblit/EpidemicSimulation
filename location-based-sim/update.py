@@ -76,11 +76,11 @@ def update_people_status(sites: List[Site], policy, time_step: float, time: date
     """
     for site in sites:
         ###
-        site.update_meeting_probability()
+        site.update_meeting_probability(time_step)
         meetings = site.check_meeting(time)
         ###
         # update_people_status_for_site(site, policy, time_step, meetings)
-        new_update_people_status_for_site(site, policy, time_step, meetings)
+        update_people_status_based_on_meetings(site, policy, time_step, meetings)
 
 def update_people_status_for_site(site: Site, policy, time_step: float, meetings: list):
     """
@@ -139,7 +139,7 @@ def update_people_status_for_site(site: Site, policy, time_step: float, meetings
                 else:
                     person.time_infected_minutes += time_step
 
-def new_update_people_status_for_site(site: Site, policy, time_step: float, meetings: list):
+def update_people_status_based_on_meetings(site: Site, policy, time_step: float, meetings: list):
     """
     update the status of all people in given site.
     `time_step' is the size of the time step, in minutes.
@@ -152,7 +152,7 @@ def new_update_people_status_for_site(site: Site, policy, time_step: float, meet
         site_infecting_score = calculate_site_infection_score(site, time_step)
         all_people_envolved = reduce(lambda a, b: a + b, [meeting._people_involved for meeting in meetings])
         for person in all_people_envolved:
-            if person.is_infected():
+            if person.is_infected:
                 try_to_heal(person, time_step)
             else:
                 try_to_infect(person, site_infecting_score)
@@ -170,7 +170,7 @@ def calculate_site_infection_score(site: Site, time_step):
         return
 
     # calculate several variables
-    number_of_ill_people = len([person for person in site.people if person.is_infected()])
+    number_of_ill_people = len([person for person in site.people if person.is_infected])
     ratio_of_ill_people = number_of_ill_people / number_of_people
     density = number_of_people / site.area
     ratio_of_capacity = number_of_people / site.nominal_capacity
@@ -197,6 +197,7 @@ def try_to_heal(person, time_step):
         person.illness_degree = 0.0
         person.immunity_degree = 1.0
         person.time_infected_minutes = None
+        person.is_infected = False
     #if not healed
     else:
         person.time_infected_minutes += time_step
@@ -215,5 +216,5 @@ def try_to_infect(person, site_infecting_score):
     # perform infection
     if random.random() < person_infecting_score:
         person.illness_degree = 1.0
-        if person.time_infected_minutes is None:
-            person.time_infected_minutes = 0.0
+        person.time_infected_minutes = 0.0
+        person.is_infected = True

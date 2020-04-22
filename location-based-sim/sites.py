@@ -64,16 +64,17 @@ class Site(SiteBase):
         # and the dispersion factor of the site
         self.meeting_probability: float = None
 
-    def update_meeting_probability(self):
+    def update_meeting_probability(self, time_step):
         """
         calculates the meeting probabilty in a 'Site' in a certain moment.
         multiplying the number of people in square meters with the dispersion factor.
         the meeting probability is in scale of 0 to 1.
+        :param time_step - the time intervals
         """
         if len(self.people) < 2:
             self.meeting_probability = 0
         else:
-            m_p = (len(self.people)*10/self.area)*self.dispersion_factor
+            m_p = (len(self.people)*time_step/self.area)*self.dispersion_factor
             self.meeting_probability = m_p if m_p < 1 else 1
 
     def check_meeting(self, time: datetime):

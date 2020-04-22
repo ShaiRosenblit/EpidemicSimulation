@@ -36,6 +36,6 @@ class Meeting:
         checks if one of the people in the meeting is infected.
         :return boolean
         """
-        return self._people_involved[1].is_infected() or self._people_involved[0].is_infected()
+        return self._people_involved[1].is_infected or self._people_involved[0].is_infected
 
 
