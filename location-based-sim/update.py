@@ -144,28 +144,33 @@ def new_update_people_status_for_site(site: Site, policy, time_step: float, meet
     update the status of all people in given site.
     `time_step' is the size of the time step, in minutes.
     """
-    people = site.people
-    meetings = [meeting for meeting in meetings if meeting.is_infected_in_meeting()]
+
+    # reduces only for meetings that contained an infected person
+    meetings = [meeting for meeting in meetings if meeting.is_meeting_infected()]
 
     if len(meetings) > 0:
         site_infecting_score = calculate_site_infection_score(site, time_step)
         all_people_envolved = reduce(lambda a, b: a + b, [meeting._people_involved for meeting in meetings])
         for person in all_people_envolved:
-            if person.is_person_infected():
+            if person.is_infected():
                 try_to_heal(person, time_step)
             else:
                 try_to_infect(person, site_infecting_score)
 
 def calculate_site_infection_score(site: Site, time_step):
+    """
+    calculates an infection score for a specific site,
+    based on several variables derived from the people and the site.
+    :param site - the current site
+    :param time_step - the intervals
+    :return site_infecting_score.
+    """
     number_of_people = len(site.people)
     if number_of_people == 0:
         return
 
-    # the following code should be changed to be a realistic model of the chance
-    # if infection given the site and people properties.
-
     # calculate several variables
-    number_of_ill_people = len([person.is_person_infected() is True for person in site.people])
+    number_of_ill_people = len([person for person in site.people if person.is_infected()])
     ratio_of_ill_people = number_of_ill_people / number_of_people
     density = number_of_people / site.area
     ratio_of_capacity = number_of_people / site.nominal_capacity
@@ -178,6 +183,13 @@ def calculate_site_infection_score(site: Site, time_step):
     return site_infecting_score
 
 def try_to_heal(person, time_step):
+    """
+    attempts to heal an infected person.
+    if succeeded zeros the infection parameter and the person is no more infectious.
+    otherwise increments the infection count.
+    :param person - the person to be healed
+    :param time_step - the time intervals
+    """
     # chance of healing
     if random.random() < 0.00001 * time_step:
 
@@ -190,6 +202,12 @@ def try_to_heal(person, time_step):
         person.time_infected_minutes += time_step
 
 def try_to_infect(person, site_infecting_score):
+    """
+    in a contagious meeting try to infect a non infected person.
+    if succeeded start the time infected count/
+    :param person - the person to be infected
+    :param site_infecting_score - the infecting score calculated for the specific site.
+    """
     # a probability for this specific person of getting infected
     person_infecting_score = site_infecting_score * (
             1 - person.immunity_degree) * person.susceptibility_degree
