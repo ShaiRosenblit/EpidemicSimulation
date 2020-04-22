@@ -59,6 +59,7 @@ class Person:
         # if currently infected, this will contain the total time being
         # infected, in days. Otherwise, this will be `None`
         self.time_infected_minutes: Optional[float] = None
+        self.is_infected = False
 
         # the degree to which the `Person` will abide by rules enforced by a
         # policy, such as: masks, hand washing, social distancing, quarantine.
@@ -132,3 +133,10 @@ class Person:
 
         self.next_site = next_site
         self.next_site_time = next_site_time
+    #
+    # def is_infected(self):
+    #     """
+    #     checks if the person is infected, if so return True.
+    #     :return Boolean
+    #     """
+    #     return self.time_infected_minutes != None

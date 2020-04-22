@@ -258,8 +258,11 @@ def create_people(sites: AllSites):
             person.symptoms_degree = 0.0 if (person.illness_degree == 0.0) else random.uniform(0, 1)
 
             # choose how long infected
-            person.time_infected_minutes = random.uniform(0,10000) if \
-                person.illness_degree > 0 else None
+            if person.illness_degree > 0:
+                person.time_infected_minutes = random.uniform(0,10000)
+                person.is_infected = True
+            else:
+                None
 
             # set other parameters
             person.immunity_degree = 0.0
